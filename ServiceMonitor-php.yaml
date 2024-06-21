@@ -6,6 +6,7 @@ metadata:
   labels:
     release: prometheus
     app: apache
+    kube-burner-job: hpa
 spec:
   namespaceSelector:
       matchNames:
