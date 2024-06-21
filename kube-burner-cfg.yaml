@@ -10,6 +10,8 @@ jobs:
     cleanup: true
     waitWhenFinished: true
     objects:
+      - objectTemplate: tmp/templates-1/new-temps/namespace.yaml
+        replicas: 45
       - objectTemplate: tmp/templates-1/new-temps/Deployment-new-php.yaml
         replicas: 45
       - objectTemplate: tmp/templates-1/new-temps/service-new-php.yaml
