@@ -12,13 +12,15 @@ jobs:
     objects:
       - objectTemplate: tmp/templates-1/new-temps/namespace.yaml
         replicas: 45
-      - objectTemplate: tmp/templates-1/new-temps/Deployment-new-php.yaml
+      - objectTemplate: tmp/templates-1/new-temps/Deployment-php.yaml
         replicas: 45
-      - objectTemplate: tmp/templates-1/new-temps/service-new-php.yaml
+      - objectTemplate: tmp/templates-1/new-temps/service-ClusterIP.yaml
         replicas: 45
-      - objectTemplate: tmp/templates-1/new-temps/ServiceMonitor-new-php.yaml
+      - objectTemplate: tmp/templates-1/new-temps/service-php.yaml
         replicas: 45
-      - objectTemplate: tmp/templates-1/new-temps/Configmap-new-php.yaml
+      - objectTemplate: tmp/templates-1/new-temps/ServiceMonitor-php.yaml
         replicas: 45
-      - objectTemplate: tmp/templates-1/new-temps/HorizontalPodAutoscaler-new-php.yaml
+      - objectTemplate: tmp/templates-1/new-temps/Configmap-php.yaml
+        replicas: 45
+      - objectTemplate: tmp/templates-1/new-temps/HorizontalPodAutoscaler-php.yaml
         replicas: 45
