@@ -1,0 +1,99 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apache2-conf
+  namespace: ns-{{.Replica}}
+  labels:
+    kube-burner-job: hpa
+data:
+  apache2.conf: "# This is the main Apache server configuration file.  It contains
+    the\n# configuration directives that give the server its instructions.\n# See
+    http://httpd.apache.org/docs/2.4/ for detailed information about\n# the directives
+    and /usr/share/doc/apache2/README.Debian about Debian specific\n# hints.\n#\n#\n#
+    Summary of how the Apache 2 configuration works in Debian:\n# The Apache 2 web
+    server configuration in Debian is quite different to\n# upstream's suggested way
+    to configure the web server. This is because Debian's\n# default Apache2 installation
+    attempts to make adding and removing modules,\n# virtual hosts, and extra configuration
+    directives as flexible as possible, in\n# order to make automating the changes
+    and administering the server as easy as\n# possible.\n\n# It is split into several
+    files forming the configuration hierarchy outlined\n# below, all located in the
+    /etc/apache2/ directory:\n#\n#\t/etc/apache2/\n#\t|-- apache2.conf\n#\t|\t`--
+    \ ports.conf\n#\t|-- mods-enabled\n#\t|\t|-- *.load\n#\t|\t`-- *.conf\n#\t|--
+    conf-enabled\n#\t|\t`-- *.conf\n# \t`-- sites-enabled\n#\t \t`-- *.conf\n#\n#\n#
+    * apache2.conf is the main configuration file (this file). It puts the pieces\n#
+    \  together by including all remaining configuration files when starting up the\n#
+    \  web server.\n#\n# * ports.conf is always included from the main configuration
+    file. It is\n#   supposed to determine listening ports for incoming connections
+    which can be\n#   customized anytime.\n#\n# * Configuration files in the mods-enabled/,
+    conf-enabled/ and sites-enabled/\n#   directories contain particular configuration
+    snippets which manage modules,\n#   global configuration fragments, or virtual
+    host configurations,\n#   respectively.\n#\n#   They are activated by symlinking
+    available configuration files from their\n#   respective *-available/ counterparts.
+    These should be managed by using our\n#   helpers a2enmod/a2dismod, a2ensite/a2dissite
+    and a2enconf/a2disconf. See\n#   their respective man pages for detailed information.\n#\n#
+    * The binary is called apache2. Due to the use of environment variables, in\n#
+    \  the default configuration, apache2 needs to be started/stopped with\n#   /etc/init.d/apache2
+    or apache2ctl. Calling /usr/bin/apache2 directly will not\n#   work with the default
+    configuration.\n\n\n# Global configuration\n#\n\n#\n# ServerRoot: The top of the
+    directory tree under which the server's\n# configuration, error, and log files
+    are kept.\n#\n# NOTE!  If you intend to place this on an NFS (or otherwise network)\n#
+    mounted filesystem then please read the Mutex documentation (available\n# at <URL:http://httpd.apache.org/docs/2.4/mod/core.html#mutex>);\n#
+    you will save yourself a lot of trouble.\n#\n# Do NOT add a slash at the end of
+    the directory path.\n#\n#ServerRoot \"/etc/apache2\"\n\n#\n# The accept serialization
+    lock file MUST BE STORED ON A LOCAL DISK.\n#\n#Mutex file:${APACHE_LOCK_DIR} default\n\n#\n#
+    The directory where shm and other runtime files will be stored.\n#\n\nDefaultRuntimeDir
+    ${APACHE_RUN_DIR}\n\n#\n# PidFile: The file in which the server should record
+    its process\n# identification number when it starts.\n# This needs to be set in
+    /etc/apache2/envvars\n#\nPidFile ${APACHE_PID_FILE}\n\n#\n# Timeout: The number
+    of seconds before receives and sends time out.\n#\nTimeout 300\n\n#\n# KeepAlive:
+    Whether or not to allow persistent connections (more than\n# one request per connection).
+    Set to \"Off\" to deactivate.\n#\nKeepAlive On\n\n#\n# MaxKeepAliveRequests: The
+    maximum number of requests to allow\n# during a persistent connection. Set to
+    0 to allow an unlimited amount.\n# We recommend you leave this number high, for
+    maximum performance.\n#\nMaxKeepAliveRequests 100\n\n#\n# KeepAliveTimeout: Number
+    of seconds to wait for the next request from the\n# same client on the same connection.\n#\nKeepAliveTimeout
+    5\n\n\n# These need to be set in /etc/apache2/envvars\nUser ${APACHE_RUN_USER}\nGroup
+    ${APACHE_RUN_GROUP}\n\n#\n# HostnameLookups: Log the names of clients or just
+    their IP addresses\n# e.g., www.apache.org (on) or 204.62.129.132 (off).\n# The
+    default is off because it'd be overall better for the net if people\n# had to
+    knowingly turn this feature on, since enabling it means that\n# each client request
+    will result in AT LEAST one lookup request to the\n# nameserver.\n#\nHostnameLookups
+    Off\n\n# ErrorLog: The location of the error log file.\n# If you do not specify
+    an ErrorLog directive within a <VirtualHost>\n# container, error messages relating
+    to that virtual host will be\n# logged here.  If you *do* define an error logfile
+    for a <VirtualHost>\n# container, that host's errors will be logged there and
+    not here.\n#\nErrorLog /dev/stderr\nTransferLog /dev/stdout\n\n#\n# LogLevel:
+    Control the severity of messages logged to the error_log.\n# Available values:
+    trace8, ..., trace1, debug, info, notice, warn,\n# error, crit, alert, emerg.\n#
+    It is also possible to configure the log level for particular modules, e.g.\n#
+    \"LogLevel info ssl:warn\"\n#\nLogLevel warn\n\n# Include module configuration:\nIncludeOptional
+    mods-enabled/*.load\nIncludeOptional mods-enabled/*.conf\n\n# Include list of
+    ports to listen on\nInclude ports.conf\n\n\n# Sets the default security model
+    of the Apache2 HTTPD server. It does\n# not allow access to the root filesystem
+    outside of /usr/share and /var/www.\n# The former is used by web applications
+    packaged in Debian,\n# the latter may be used for local directories served by
+    the web server. If\n# your system is serving content from a sub-directory in /srv
+    you must allow\n# access here, or in any related virtual host.\n<Directory />\n\tOptions
+    FollowSymLinks\n\tAllowOverride None\n\tRequire all denied\n</Directory>\n\n<Directory
+    /usr/share>\n\tAllowOverride None\n\tRequire all granted\n</Directory>\n\n<Directory
+    /var/www/>\n\tOptions Indexes FollowSymLinks\n\tAllowOverride None\n\tRequire
+    all granted\n</Directory>\n\n#<Directory /srv/>\n#\tOptions Indexes FollowSymLinks\n#\tAllowOverride
+    None\n#\tRequire all granted\n#</Directory>\n\n\n\n\n# AccessFileName: The name
+    of the file to look for in each directory\n# for additional configuration directives.
+    \ See also the AllowOverride\n# directive.\n#\nAccessFileName .htaccess\n\n#\n#
+    The following lines prevent .htaccess and .htpasswd files from being\n# viewed
+    by Web clients.\n#\n<FilesMatch \"^\\.ht\">\n\tRequire all denied\n</FilesMatch>\n\n\n#\n#
+    The following directives define some format nicknames for use with\n# a CustomLog
+    directive.\n#\n# These deviate from the Common Log Format definitions in that
+    they use %O\n# (the actual bytes sent including headers) instead of %b (the size
+    of the\n# requested file), because the latter makes it impossible to detect partial\n#
+    requests.\n#\n# Note that the use of %{X-Forwarded-For}i instead of %h is not
+    recommended.\n# Use mod_remoteip instead.\n#\nLogFormat \"%v:%p %h %l %u %t \\\"%r\\\"
+    %>s %O \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\"\" vhost_combined\nLogFormat
+    \"%h %l %u %t \\\"%r\\\" %>s %O \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\"\" combined\nLogFormat
+    \"%h %l %u %t \\\"%r\\\" %>s %O\" common\nLogFormat \"%{Referer}i -> %U\" referer\nLogFormat
+    \"%{User-agent}i\" agent\n\n# Include of directories ignores editors' and dpkg's
+    backup files,\n# see README.Debian for details.\n\n# Include generic snippets
+    of statements\nIncludeOptional conf-enabled/*.conf\n\n# Include the virtual host
+    configurations:\nIncludeOptional sites-enabled/*.conf\n\n\n<Location /server-status>\nSetHandler
+    server-status\nOrder deny,allow\nDeny from all\nAllow from localhost\n</Location>\n"

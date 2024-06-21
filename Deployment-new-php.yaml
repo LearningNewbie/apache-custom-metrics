@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-deployment-{{.Replica}}
+  namespace: ns-{{.Replica}}
+  annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9117"
+  labels:
+    app: apache
+    release: prometheus
+    kube-burner-job: hpa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      release: prometheus
+      app: apache
+  template:
+    metadata:
+      labels:
+        release: prometheus
+        app: apache
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9117"
+    spec:
+      containers:
+      - name: apache-exporter
+        image: bitnami/apache-exporter:latest
+        ports:
+        - containerPort: 9117
+      - name: php-apache
+        image: ubuntu/apache2
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /etc/apache2/apache2.conf
+          subPath: apache2.conf
+          name: apache2-conf
+        resources:
+          requests:
+            cpu: 200m
+            memory: 128Mi
+      volumes:
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: apache2.conf
+            path: apache2.conf
+          name: apache2-conf
+        name: apache2-conf

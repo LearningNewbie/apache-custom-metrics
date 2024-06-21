@@ -1,0 +1,19 @@
+kind: ServiceMonitor
+apiVersion: monitoring.coreos.com/v1
+metadata:
+  namespace: ns-{{.Replica}}
+  name: php-apache-{{.Replica}}
+  labels:
+    release: prometheus
+    app: apache
+spec:
+  namespaceSelector:
+      matchNames:
+      - ns-{{.Replica}}
+  selector:
+    matchLabels:
+      release: prometheus
+      app: apache
+  endpoints:
+  - port: metrics
+    path: /metrics

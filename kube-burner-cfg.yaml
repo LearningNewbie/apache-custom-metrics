@@ -1,0 +1,22 @@
+global:
+  measurements:
+    - name: podLatency
+  clusterHealth: true
+jobs:
+  - name: hpa-intensive
+    jobIterations: 1
+    namespacedIterations: true
+    podWait: false
+    cleanup: true
+    waitWhenFinished: true
+    objects:
+      - objectTemplate: tmp/templates-1/new-temps/Deployment-new-php.yaml
+        replicas: 45
+      - objectTemplate: tmp/templates-1/new-temps/service-new-php.yaml
+        replicas: 45
+      - objectTemplate: tmp/templates-1/new-temps/ServiceMonitor-new-php.yaml
+        replicas: 45
+      - objectTemplate: tmp/templates-1/new-temps/Configmap-new-php.yaml
+        replicas: 45
+      - objectTemplate: tmp/templates-1/new-temps/HorizontalPodAutoscaler-new-php.yaml
+        replicas: 45
