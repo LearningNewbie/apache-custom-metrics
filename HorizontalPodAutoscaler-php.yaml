@@ -4,6 +4,7 @@ metadata:
   labels:
     release: prometheus
     app: apache
+    kube-burner-job: hpa
   name: hpa-php-apache-{{.Replica}}
   namespace: ns-{{.Replica}}
 spec:
