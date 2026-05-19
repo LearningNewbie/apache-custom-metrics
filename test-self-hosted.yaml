@@ -1,0 +1,15 @@
+name: Test Self-Hosted Runner
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: arc-runner-x86-spot
+    steps:
+      - name: Hello from EKS
+        run: |
+          echo "Running on self-hosted runner!"
+          echo "Architecture: $(uname -m)"
+          echo "Hostname: $(hostname)"
+          cat /etc/os-release | head -3
